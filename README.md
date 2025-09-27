@@ -127,17 +127,7 @@ A Twitter-like social media application with separate frontend and backend. The 
 - `middleware/` - Custom middleware (authentication, validation)
 - `server.js` - Main server configuration and startup
 
-### Environment Variables
 
-**Backend (`.env`):**
-```env
-NODE_ENV=development
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/chitchat
-JWT_SECRET=your_super_secret_jwt_key
-JWT_EXPIRE=7d
-CORS_ORIGIN=http://localhost:5173
-```
 
 ### Database Setup
 1. **Install MongoDB locally** or use **MongoDB Atlas** (cloud)
