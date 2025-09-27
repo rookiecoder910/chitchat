@@ -32,19 +32,36 @@ const Home = () => {
   }, [navigate]);
 
   return (
-    <div className="max-w-xl mx-auto py-8">
-      <h1 className="text-3xl font-bold text-blue-600 mb-6">Chit Chat Timeline</h1>
-      {loading ? (
-        <div className="text-gray-500">Loading...</div>
-      ) : error ? (
-        <div className="text-red-500">{error}</div>
-      ) : posts.length === 0 ? (
-        <div className="text-gray-500">No posts yet.</div>
-      ) : (
-        posts.map(post => (
-          <PostCard key={post.id} {...post} />
-        ))
-      )}
+    <div className="min-h-screen bg-black">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-800">
+          <div className="px-4 py-4">
+            <h1 className="text-xl font-bold text-white">Home</h1>
+          </div>
+        </div>
+        
+        {/* Content */}
+        <div className="">
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-gray-400">Loading...</div>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-red-400">{error}</div>
+            </div>
+          ) : posts.length === 0 ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-gray-400">No posts yet.</div>
+            </div>
+          ) : (
+            posts.map(post => (
+              <PostCard key={post.id} {...post} />
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 };
