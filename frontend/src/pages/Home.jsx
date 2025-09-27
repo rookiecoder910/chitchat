@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PostCard from "../components/PostCard";
+import { fetchPosts } from "../services/postsService";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -15,18 +16,19 @@ const Home = () => {
       navigate("/login");
       return;
     }
-    fetch("/api/posts/timeline", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => {
-        setPosts(data.posts || []);
+    
+    const loadPosts = async () => {
+      try {
+        const postsData = await fetchPosts();
+        setPosts(postsData);
         setLoading(false);
-      })
-      .catch(() => {
+      } catch (err) {
         setError("Failed to load posts");
         setLoading(false);
-      });
+      }
+    };
+
+    loadPosts();
   }, [navigate]);
 
   return (

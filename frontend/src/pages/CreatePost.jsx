@@ -1,11 +1,14 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createPost } from "../services/postsService";
+import { getCurrentUser } from "../services/authService";
 
 const CreatePost = () => {
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -17,25 +20,26 @@ const CreatePost = () => {
     e.preventDefault();
     setError("");
     setSuccess(false);
-    const token = localStorage.getItem("token");
+    setLoading(true);
+    
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      navigate("/login");
+      return;
+    }
+
     try {
-      const res = await fetch("/api/posts/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ content })
-      });
-      if (res.ok) {
-        setSuccess(true);
-        setContent("");
-      } else {
-        const data = await res.json();
-        setError(data.detail || "Failed to create post");
-      }
-    } catch {
-      setError("Network error");
+      await createPost(content, currentUser.username);
+      setSuccess(true);
+      setContent("");
+      // Redirect to home after a short delay
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    } catch (error) {
+      setError(error.detail || "Failed to create post");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,7 +55,17 @@ const CreatePost = () => {
           onChange={e => setContent(e.target.value)}
           required
         />
-        <button type="submit" className="bg-blue-500 text-white py-2 rounded font-medium hover:bg-blue-600">Post</button>
+        <button 
+          type="submit" 
+          disabled={loading}
+          className={`py-2 rounded font-medium transition-colors ${
+            loading 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-blue-500 hover:bg-blue-600'
+          } text-white`}
+        >
+          {loading ? "Posting..." : "Post"}
+        </button>
         {error && <div className="text-red-500 text-sm">{error}</div>}
         {success && <div className="text-green-500 text-sm">Posted!</div>}
       </form>
